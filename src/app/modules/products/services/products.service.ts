@@ -43,9 +43,9 @@ export class ProductsService {
     return this.http.get<string[]>(this.getCategoryListUrl);
   }
   
-  getProductsByCategory(): Observable<ProductTable[]> {
+  getProductsByCategory(category: string | null): Observable<ProductTable[]> {
     // TODO: Check if I can use the getAllProducts method
-    return this.http.get<ProductResponse>(this.getProductsByCategoryUrl)
+    return this.http.get<ProductResponse>(this.getProductsByCategoryUrl + category)
     .pipe(
       map((res: ProductResponse) => {
         return res.products.map(product => ({
