@@ -1,1 +1,24 @@
-<p>sidebar works!</p>
+<mat-drawer-container class="container" autosize>
+    <mat-drawer #drawer class="sidenav" mode="side">
+      <!-- TODO: Add collapse for categories -->
+      <ul>
+        <li>
+          <a [routerLink]="['/products']" routerLinkActive="active">Todas</a>
+        </li>
+  
+        @for (category of categories(); track category) {
+          <li>
+            <a [routerLink]="['/products', category]" routerLinkActive="active">
+              {{ category }}
+            </a>
+          </li>
+        }
+      </ul>
+    </mat-drawer>
+  
+    <div class="sidenav-content">
+      <button type="button" mat-button (click)="drawer.toggle()">
+        <mat-icon style="margin: 0;">menu</mat-icon>
+      </button>
+    </div>
+</mat-drawer-container>

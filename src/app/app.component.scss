@@ -1,0 +1,22 @@
+.sidebar {
+    grid-area: sidebar;
+}
+.main-content {
+    grid-area: content;
+}
+.wrapper {
+    height: 100vh;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: 0fr 3fr;
+    grid-template-areas: 
+      "sidebar content"
+}
+@media (max-width: 500px) {
+  .wrapper {
+    grid-template-columns: 4fr;
+    grid-template-areas:
+      "content"
+      "sidebar"
+  }
+}
