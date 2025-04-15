@@ -9,7 +9,11 @@ export const PRODUCTS_ROUTES: Routes = [
         component: ProductsListComponent
     },
     {
-        path: 'product/:id',
+        path: 'products/:category',
+        component: ProductsListComponent
+    },
+    {
+        path: 'product-detail/:id',
         component: ProductDetailsComponent
     }
 ];
