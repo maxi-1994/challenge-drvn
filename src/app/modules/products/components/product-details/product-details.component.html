@@ -1,1 +1,38 @@
-<p>product-details works!</p>
+<ng-container *ngIf="product() as productData">
+    <div class="product-details-content">
+        <div class="product-grid">
+            <div class="product-image">
+                <img
+                    *ngIf="productData.images?.length"
+                    [src]="productData.images[0]"
+                    [alt]="productData.title"
+                    width="60"
+                    height="60"
+                    style="object-fit: cover; border-radius: 4px;"
+                />
+            </div>
+            <div class="product-info">
+                <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                    <h2>{{ productData.title }}</h2>
+                    <p><strong>Marca:</strong> {{ productData.brand }}</p>
+                    <p>
+                        <strong>Precio:</strong>
+                        <span>
+                            {{ productData.price | currencyFormat }}
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Stock:</strong>
+                        <span [style.color]="productData.stock | stockColor">
+                            {{ productData.stock }}
+                        </span>
+                    </p>
+                    <p><strong>Rating:</strong> {{ productData.rating }} ⭐</p>
+                    <p><strong>Descuento:</strong> {{ productData.discountPercentage }}%</p>
+                    <p><strong>Descripción:</strong> {{ productData.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+

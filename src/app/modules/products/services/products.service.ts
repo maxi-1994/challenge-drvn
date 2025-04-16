@@ -2,61 +2,80 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { map, Observable } from 'rxjs';
-import { Product, ProductResponse, ProductTable } from '../utils/products.model';
+import { Product, ProductDetails, ProductResponse, ProductTable } from '../utils/products.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductsService {
   private baseUrl: string = environment.apiUrl;
-  private getAllProductsUrl = `${this.baseUrl}products`;
   private getProductByIdUrl = `${this.baseUrl}products/`;
   private getCategoryListUrl = `${this.baseUrl}products/category-list`
-  private getProductsByCategoryUrl = `${this.baseUrl}products/category/`
   private updateProductUrl = `${this.baseUrl}products/`
 
   constructor(private http: HttpClient) { }
 
-  getAllProducts(): Observable<ProductTable[]> {
-    // TODO: Add limit query param to pagination           -> devuelve productResponse
-    // TODO: Add the searcher here? or create other method -> devuelve productResponse
-    return this.http.get<ProductResponse>(this.getAllProductsUrl)
+  getProducts(category: string | null, limit: number = 0, skip: number): Observable<{ products: ProductTable[], total: number }> {
+    let getProductsUrl = category
+    ? `${this.baseUrl}products/category/${category}`
+    : `${this.baseUrl}products`;
+
+    return this.http.get<ProductResponse>(`${getProductsUrl}?limit=${limit}&skip=${skip}`)
       .pipe(
-        map((res: ProductResponse) => {
-          return res.products.map(product => ({
+        map((res: ProductResponse) => ({
+          products: res.products.map(product => ({
             id: product.id,
+            thumbnail: product.thumbnail,
             title: product.title,
             brand: product.brand,
             price: product.price,
             stock: product.stock,
             rating: product.rating
-          }))
-        })
+          })),
+          total: res.total
+        }))
       );
   }
 
-  getProductById(productId: string): Observable<Product> {
-    return this.http.get<Product>(this.getProductByIdUrl + productId);
+  getProductById(productId: string): Observable<ProductDetails> {
+    return this.http.get<Product>(this.getProductByIdUrl + productId)
+      .pipe(
+        map((product: Product) => {
+          return {
+            id: product.id,
+            title: product.title,
+            brand: product.brand,
+            price: product.price,
+            stock: product.stock,
+            rating: product.rating,
+            discountPercentage: product.discountPercentage,
+            description: product.description,
+            images: product.images
+          }
+        })
+      );
   }
 
   getCategoryList(): Observable<string[]> {
     return this.http.get<string[]>(this.getCategoryListUrl);
   }
+
+  searchProducts(query: string, limit: number = 0, skip: number): Observable<{ products: ProductTable[], total: number }> {
+    const url = `${this.baseUrl}products/search?q=${query}&limit=${limit}&skip=${skip}`;
   
-  getProductsByCategory(): Observable<ProductTable[]> {
-    // TODO: Check if I can use the getAllProducts method
-    return this.http.get<ProductResponse>(this.getProductsByCategoryUrl)
-    .pipe(
-      map((res: ProductResponse) => {
-        return res.products.map(product => ({
+    return this.http.get<ProductResponse>(url).pipe(
+      map((res: ProductResponse) => ({
+        products: res.products.map(product => ({
           id: product.id,
+          thumbnail: product.thumbnail,
           title: product.title,
           brand: product.brand,
           price: product.price,
           stock: product.stock,
           rating: product.rating
-        }))
-      })
+        })),
+        total: res.total
+      }))
     );
   }
 

@@ -14,7 +14,7 @@ import { ProductsService } from '../../../modules/products/services/products.ser
 })
 export class SidebarComponent {
   private productsService = inject(ProductsService);
-  categories = signal<string[]>([]);
+  public categories = signal<string[]>([]);
 
   constructor() {
     effect(() => {
