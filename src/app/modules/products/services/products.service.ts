@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { map, Observable } from 'rxjs';
-import { Product, ProductDetails, ProductResponse, ProductTable } from '../utils/products.model';
+import { Product, ProductDetails, ProductResponse, ProductTable, ProductUpdateBody } from '../utils/products.model';
 
 @Injectable({
   providedIn: 'root'
@@ -79,7 +79,7 @@ export class ProductsService {
     );
   }
 
-  updateProduct(product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.updateProduct}${product.id}`, product);
+  updateProduct(product: ProductUpdateBody, productId: string): Observable<Product> {
+    return this.http.put<Product>(`${this.updateProduct}${productId}`, product);
   }
 }

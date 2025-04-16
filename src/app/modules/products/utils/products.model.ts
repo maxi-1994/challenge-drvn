@@ -52,4 +52,5 @@ export interface Dimensions {
 }
 
 export type ProductTable = Pick<Product, 'id' | 'thumbnail' | 'title' | 'brand' | 'price' | 'stock' | 'rating'>;
-export type ProductDetails = Pick<Product, 'id' | 'title' | 'brand' | 'brand' | 'stock' | 'price' | 'rating' | 'discountPercentage' | 'description' | 'images'>;
+export type ProductDetails = Pick<Product, 'id' | 'title' | 'brand'  | 'stock' | 'price' | 'rating' | 'discountPercentage' | 'description' | 'images'>;
+export type ProductUpdateBody = Pick<Product, 'title' | 'stock' | 'price' |'description'>;
