@@ -13,6 +13,7 @@ import { ProductDetails, ProductUpdateBody } from '../../utils/products.model';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { StockPipe } from '../../../../shared/pipes/stock.pipe';
 import { CurrencyFormatPipe } from '../../../../shared/pipes/currency-format.pipe';
+import { PriceWithDiscountPipe } from '../../../../shared/pipes/pricewithdiscount.pipe';
 
 @Component({
   selector: 'app-product-details',
@@ -20,7 +21,8 @@ import { CurrencyFormatPipe } from '../../../../shared/pipes/currency-format.pip
     CommonModule, 
     MatButtonModule, 
     CurrencyFormatPipe, 
-    StockPipe, 
+    StockPipe,
+    PriceWithDiscountPipe,
     ReactiveFormsModule, 
     MatSnackBarModule,
     MatFormFieldModule,
