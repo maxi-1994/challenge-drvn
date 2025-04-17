@@ -1,6 +1,8 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawerContainer, MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon'
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -8,7 +10,7 @@ import { ProductsService } from '../../../modules/products/services/products.ser
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterModule, MatButtonModule, MatSidenavModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatDrawerContainer, MatDrawer, MatSidenavModule, MatIconModule, MatListModule, MatExpansionModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })

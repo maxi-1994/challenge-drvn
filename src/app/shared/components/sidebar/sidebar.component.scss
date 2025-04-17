@@ -1,8 +1,19 @@
 .container {
     height: 100vh;
+
+    .sidenav {
+        width: 300px;
+
+        .mat-expansion-panel-header {
+            font-weight: bold;
+        }
+
+        a.active {
+            font-weight: bold;
+            color: #3f51b5;
+          }
+    }
 }
   
-.sidenav {
-    width: 300px;
-}
+ 
   

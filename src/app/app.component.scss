@@ -3,6 +3,7 @@
 }
 .main-content {
     grid-area: content;
+    overflow: auto;
 }
 .wrapper {
     height: 100vh;

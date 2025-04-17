@@ -1,99 +1,36 @@
-@if (category(); as currentCategory) {
-    <h1>Categoría: {{ currentCategory }}</h1>
-} @else {
-    <h1>Todos los productos</h1>
-}
-
-<mat-slide-toggle [checked]="currencyService.currency() === 'EUR'" (change)="onCurrencyToggle()">
-    {{ currencyService.currency() }}
-</mat-slide-toggle>
-
-<mat-form-field appearance="outline">
-    <mat-label>Buscar producto</mat-label>
-    <input matInput type="text" (input)="onSearchChange($event)" placeholder="Ej: iPhone, Laptop...">
-</mat-form-field>
-
-@if (isLoading()) {
-    <p>Cargando productos...</p>
-} @else {
-    @if (error(); as errorMsg) {
-        <p class="error">{{ errorMsg }}</p>
+<section class="product-list-content">
+    @if (category(); as currentCategory) {
+        <h1>Category: {{ currentCategory | capitalize }}</h1>
     } @else {
-        <table mat-table [dataSource]="pagedProducts()" class="mat-elevation-z8">
-            <!-- Imagen -->
-            <ng-container matColumnDef="image">
-                <th mat-header-cell *matHeaderCellDef> Image </th>
-                <td mat-cell *matCellDef="let product">
-                    <img
-                        [src]="product.thumbnail"
-                        [alt]="product.title"
-                        width="60"
-                        height="60"
-                        style="object-fit: cover; border-radius: 4px;"
-                    />
-                </td>
-            </ng-container>
-
-            <!-- Título -->
-            <ng-container matColumnDef="title">
-                <th mat-header-cell *matHeaderCellDef> Title </th>
-                <td mat-cell *matCellDef="let product"> {{ product.title }} </td>
-            </ng-container>
-          
-            <!-- Marca -->
-            <ng-container matColumnDef="brand">
-                <th mat-header-cell *matHeaderCellDef> Brand </th>
-                <td mat-cell *matCellDef="let product"> {{ product.brand }} </td>
-            </ng-container>
-          
-            <!-- Precio -->
-            <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef> Price </th>
-                <td mat-cell *matCellDef="let product"> {{ product.price | currencyFormat }} </td>
-            </ng-container>
-          
-            <!-- Stock -->
-            <ng-container matColumnDef="stock">
-                <th mat-header-cell *matHeaderCellDef> Stock </th>
-                <td 
-                    mat-cell 
-                    *matCellDef="let product"
-                    [style.color]="product.stock | stockColor"
-                    > 
-                    {{ product.stock }} 
-                </td>
-            </ng-container>
-          
-            <!-- Rating -->
-            <ng-container matColumnDef="rating">
-                <th mat-header-cell *matHeaderCellDef> Rating </th>
-                <td mat-cell *matCellDef="let product"> {{ product.rating }} </td>
-            </ng-container>
-
-            <!-- Actions -->
-            <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef> Actions </th>
-                <td mat-cell *matCellDef="let product">
-                  <button mat-icon-button color="primary" (click)="onGoToDetails(product.id)">
-                    <mat-icon>info</mat-icon>
-                  </button>
-                </td>
-            </ng-container>
-          
-            <!-- Header y Rows -->
-            <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
-        </table>
-
-        <mat-paginator
-            [length]="total()"
-            [pageSize]="pageSize()"
-            [pageIndex]="pageIndex()"
-            [pageSizeOptions]="[10, 25, 50, 100]"
-            (page)="onPageChange($event)">
-        </mat-paginator>
+        <h1>All Products</h1>
     }
-}
+    
+    <div class="toolbar-wrapper">
+        <app-search-filter (searchChangeEvent)="onSearchChange($event)"></app-search-filter>
 
+        <mat-slide-toggle [checked]="currencyService.currency() === 'EUR'" (change)="onCurrencyToggle()">
+            {{ currencyService.currency() }}
+        </mat-slide-toggle>
+    </div>
 
-  
+    @if (isLoading()) {
+        <div class="spinner-wrapper">
+            <mat-spinner></mat-spinner>
+        </div>
+    } @else {
+        @if (error(); as errorMsg) {
+            <app-message [message]="errorMsg"></app-message>
+        } @else {
+            <app-products-table
+                [products]="products()"
+                [columns]="tableColumns"
+                [length]="total()"
+                [pageSize]="pageSize()"
+                [pageIndex]="pageIndex()"
+                (goToDetails)="onGoToDetails($event)"
+                (pageChange)="onPageChange($event)"
+            ></app-products-table>
+        }
+    } 
+</section>
+ 
