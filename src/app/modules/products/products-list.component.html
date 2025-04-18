@@ -1,9 +1,5 @@
 <section class="product-list-content">
-    @if (category(); as currentCategory) {
-        <h1>Category: {{ currentCategory | capitalize }}</h1>
-    } @else {
-        <h1>All Products</h1>
-    }
+    <h1>Category: {{ category() ? (category() || '-' | capitalize) : 'All Products' }}</h1>
     
     <div class="toolbar-wrapper">
         <app-search-filter (searchChangeEvent)="onSearchChange($event)"></app-search-filter>
@@ -18,18 +14,22 @@
             <mat-spinner></mat-spinner>
         </div>
     } @else {
-        @if (error(); as errorMsg) {
-            <app-message [message]="errorMsg"></app-message>
+        @if (error()) {
+            <app-message [type]="'error'" [message]="error() || ''"></app-message>
         } @else {
-            <app-products-table
-                [products]="products()"
-                [columns]="tableColumns"
-                [length]="total()"
-                [pageSize]="pageSize()"
-                [pageIndex]="pageIndex()"
-                (goToDetails)="onGoToDetails($event)"
-                (pageChange)="onPageChange($event)"
-            ></app-products-table>
+            @if (!products().length) {
+                <app-message [type]="'info'" [message]="noProductsFoundMessage"></app-message>
+            } @else {
+                <app-products-table
+                    [products]="products()"
+                    [columns]="tableColumns"
+                    [length]="total()"
+                    [pageSize]="pageSize()"
+                    [pageIndex]="pageIndex()"
+                    (goToDetails)="onGoToDetails($event)"
+                    (pageChange)="onPageChange($event)"
+                ></app-products-table>
+            }
         }
     } 
 </section>

@@ -80,6 +80,6 @@ export class ProductsService {
   }
 
   updateProduct(product: ProductUpdateBody, productId: string): Observable<Product> {
-    return this.http.put<Product>(`${this.updateProduct}${productId}`, product);
+    return this.http.put<Product>(`${this.updateProductUrl}${productId}`, product);
   }
 }

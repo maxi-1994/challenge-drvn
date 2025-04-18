@@ -37,6 +37,11 @@
                 margin: 16px 0;
             }
 
+            .text-muted {
+                color: #6c757d;
+                font-weight: normal;
+            }
+
             .product-details-wrapper {
                 display: flex; 
                 flex-direction: column; 
@@ -46,11 +51,6 @@
                 .brand-name {
                     font-size: 15px;
                     margin: 0;
-
-                    .brand-name-muted {
-                        color: #6c757d;
-                        font-weight: normal;
-                    }
                 }
 
                 h2 { 
@@ -94,6 +94,14 @@
                         }
                     }
                 }
+
+                .stock-text {
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                .stock-value {
+                    font-weight: 500;
+                }
             }
 
             .buttons-wrapper {
@@ -105,8 +113,8 @@
 }
 
 @media (max-width: 768px) {
-.product-grid {
-    grid-template-columns: 1fr;
-}
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
 }
   

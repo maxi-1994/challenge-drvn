@@ -1,19 +1,31 @@
-.error-card {
-    margin: 20px auto;
-    max-width: 600px;
-    background-color: #ffebee;
-    color: #c62828;
+@mixin card-style($bg-color, $text-color) {
+  margin: 20px auto;
+  max-width: 600px;
+  background-color: $bg-color;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  mat-card-content {
     display: flex;
     align-items: center;
     gap: 10px;
-  
-    mat-card-content {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    mat-icon {
-      font-size: 24px;
-    }
+  }
+
+  mat-icon {
+    font-size: 24px;
+  }
+}
+
+.error-card {
+  @include card-style(#ffebee, #c62828);
+}
+
+.success-card {
+  @include card-style(#e8f5e9, #2e7d32);
+}
+
+.info-card {
+  @include card-style(#e3f2fd, #1565c0);
 }

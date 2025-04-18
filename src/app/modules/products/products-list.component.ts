@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 import { CapitalizePipe } from '../../shared/pipes/capitalize.pipe';
 import { TABLE_COLUMNS } from './utils/table.constants';
 import { MessageComponent } from '../../shared/components/message/message.component';
+import { ERROR_PRODUCTS_LIST, NO_PRODUCT_FOUND } from './utils/messages.constants';
 
 @Component({
   selector: 'app-products-list',
@@ -41,11 +42,12 @@ export class ProductsListComponent implements OnDestroy {
   public error = signal<string | null>(null);
 
   public tableColumns = TABLE_COLUMNS;
-  public total = signal(0);
-  public pageIndex = signal(0);
-  public pageSize = signal(10);
+  public total = signal<number>(0);
+  public pageIndex = signal<number>(0);
+  public pageSize = signal<number>(10);
 
-  public search = signal('');
+  public search = signal<string>('');
+  public noProductsFoundMessage: string = NO_PRODUCT_FOUND;
 
   constructor() {
     this.routeSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
@@ -71,16 +73,16 @@ export class ProductsListComponent implements OnDestroy {
         },
         error: (error) => {
           console.error('ERROR: ', error);
-          this.error.set('Hubo un problema al cargar los datos');
+          this.error.set(ERROR_PRODUCTS_LIST);
           this.isLoading.set(false);
         }
       });
     });
   }
 
-  onSearchChange(event: any): void {
+  onSearchChange(query: string): void {
     this.pageIndex.set(0);
-    this.search.set(event.target.value);
+    this.search.set(query);
   }
   
   onCurrencyToggle(): void {
