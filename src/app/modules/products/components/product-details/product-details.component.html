@@ -1,77 +1,87 @@
+<div *ngIf="isLoading()" class="spinner-wrapper">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="error()">
+  <app-message [type]="'error'" [message]="error() || ''"></app-message>
+</div>
 <ng-container *ngIf="product() as productData">
-    <form [formGroup]="form" class="product-details-content container">
+    <form *ngIf="!isLoading()" [formGroup]="form" class="fadeIn-animation product-details-content container">
       <div class="product-grid">
-        <!-- Imagen -->
         <div class="product-image">
           <img
             *ngIf="productData.images?.length"
             [src]="productData.images[0]"
             [alt]="productData.title"
-            style="width: 300px; object-fit: contain; border-radius: 4px;"
+            class="product-image-img"
           />
         </div>
-  
-        <!-- Info -->
+
         <div class="product-info">
-          <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-  
-            <!-- Título -->
+          <div class="product-details-wrapper">
+            <p class="brand-name"><strong>Brand: </strong> <span class="text-muted">{{ productData.brand || '-' }}</span></p>
             <ng-container *ngIf="!isEditing(); else editTitle">
-              <h2>{{ productData.title }}</h2>
+              <h2 class="product-title">{{ productData.title }}</h2>
             </ng-container>
             <ng-template #editTitle>
               <mat-form-field appearance="fill">
-                <mat-label>Título</mat-label>
+                <mat-label>Title</mat-label>
                 <input matInput formControlName="title" />
-                <mat-error *ngIf="form.controls.title.invalid">Campo requerido</mat-error>
+                <mat-error *ngIf="form.controls.title.invalid">Title is required</mat-error>
               </mat-form-field>
             </ng-template>
   
-            <!-- Precio -->
-            <p *ngIf="!isEditing()">
-              <strong>Precio:</strong>
-              {{ productData.price | currencyFormat }}
-            </p>
+            <div class="prices-info-content">
+              <div class="prices-wrapper">
+                <span *ngIf="!isEditing()" class="original-price">{{ productData.price | currencyFormat }}</span>
+                <mat-form-field appearance="fill" *ngIf="isEditing()">
+                  <mat-label>Price</mat-label>
+                  <input type="number" matInput formControlName="price" />
+                  <mat-error *ngIf="form.controls.price.invalid">Price is required</mat-error>
+                </mat-form-field>
+                <span class="discounted-price">
+                  {{ productData.price | priceWithDiscount: productData.discountPercentage | currencyFormat }}
+                </span>
+              </div>
+
+              <div class="rating-wrapper">
+                <div>
+                  <mat-icon class="raiting-star">star</mat-icon>
+                </div>
+                <p class="raiting-text">
+                   <span>{{ productData.rating }}</span>
+                </p>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div *ngIf="!isEditing()">
+              <h3>Description:</h3>
+              <p>{{ productData.description }}</p>
+            </div>
             <mat-form-field appearance="fill" *ngIf="isEditing()">
-              <mat-label>Precio</mat-label>
-              <input type="number" matInput formControlName="price" />
-              <mat-error *ngIf="form.controls.price.invalid">Campo requerido</mat-error>
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3"></textarea>
+              <mat-error *ngIf="form.controls.description.invalid">Description is required</mat-error>
             </mat-form-field>
   
-            <!-- Stock -->
             <p *ngIf="!isEditing()">
-              <strong>Stock:</strong>
-              <span [style.color]="productData.stock | stockColor">
+              <span class="stock-text text-muted">Stock:</span>
+              <span class="stock-value" [style.color]="productData.stock | stockColor">
                 {{ productData.stock }}
               </span>
             </p>
             <mat-form-field appearance="fill" *ngIf="isEditing()">
               <mat-label>Stock</mat-label>
               <input type="number" matInput formControlName="stock" />
-              <mat-error *ngIf="form.controls.stock.invalid">Campo requerido</mat-error>
+              <mat-error *ngIf="form.controls.stock.invalid">Stock is required</mat-error>
             </mat-form-field>
-  
-            <!-- Descripción -->
-            <p *ngIf="!isEditing()">
-              <strong>Descripción:</strong> {{ productData.description }}
-            </p>
-            <mat-form-field appearance="fill" *ngIf="isEditing()">
-              <mat-label>Descripción</mat-label>
-              <textarea matInput formControlName="description" rows="3"></textarea>
-              <mat-error *ngIf="form.controls.description.invalid">Campo requerido</mat-error>
-            </mat-form-field>
-  
-            <!-- Info adicional no editable -->
-            <p><strong>Marca:</strong> {{ productData.brand }}</p>
-            <p><strong>Rating:</strong> {{ productData.rating }} ⭐</p>
-            <p><strong>Descuento:</strong> {{ productData.discountPercentage }}%</p>
-  
           </div>
   
-          <!-- Botones -->
           <div class="buttons-wrapper">
             <button mat-stroked-button type="button" (click)="onCancelEdit()" *ngIf="isEditing()">Cancelar</button>
-            <button mat-flat-button type="submit" color="primary" (click)="onSave()" *ngIf="isEditing()">Guardar</button>
+            <button mat-flat-button type="submit" color="primary" (click)="onSave()" *ngIf="isEditing()" [disabled]="form.invalid">Guardar</button>
+            <button mat-stroked-button type="button" (click)="onBack()" *ngIf="!isEditing()">Back</button>
             <button mat-flat-button type="button" color="accent" (click)="onEnableEdit()" *ngIf="!isEditing()">Editar</button>
           </div>
         </div>

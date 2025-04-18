@@ -1,22 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { Component, effect, inject, signal, OnDestroy, computed } from '@angular/core';
+import { Component, effect, inject, signal, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ProductsTableComponent } from './components/products-table/products-table.component';
+import { SearchFilterComponent } from '../../shared/components/search-filter/search-filter.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CurrencyService } from '../../core/services/currency.service';
 import { ProductsService } from './services/products.service';
 import { ProductTable } from './utils/products.model';
+import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
-import { StockPipe } from '../../shared/pipes/stock.pipe';
-import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
-import { CurrencyService } from '../../core/services/currency.service';
+import { CapitalizePipe } from '../../shared/pipes/capitalize.pipe';
+import { TABLE_COLUMNS } from './utils/table.constants';
+import { MessageComponent } from '../../shared/components/message/message.component';
+import { ERROR_PRODUCTS_LIST, NO_PRODUCT_FOUND } from './utils/messages.constants';
 
 @Component({
   selector: 'app-products-list',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule, MatIconModule, StockPipe, CurrencyFormatPipe],
+  imports: [
+    CommonModule, 
+    MatSlideToggleModule,
+    MatProgressSpinnerModule,
+    ProductsTableComponent, 
+    SearchFilterComponent,
+    MessageComponent,
+    CapitalizePipe, 
+  ],
   templateUrl: './products-list.component.html',
   styleUrl: './products-list.component.scss'
 })
@@ -32,13 +41,13 @@ export class ProductsListComponent implements OnDestroy {
   public isLoading = signal<boolean>(true);
   public error = signal<string | null>(null);
 
-  public tableColumns = ['image', 'title', 'brand', 'price', 'stock', 'rating', 'actions'];
-  public total = signal(0);
-  public pageIndex = signal(0);
-  public pageSize = signal(10);
-  readonly pagedProducts = computed(() => this.products());
+  public tableColumns = TABLE_COLUMNS;
+  public total = signal<number>(0);
+  public pageIndex = signal<number>(0);
+  public pageSize = signal<number>(10);
 
-  public search = signal('');
+  public search = signal<string>('');
+  public noProductsFoundMessage: string = NO_PRODUCT_FOUND;
 
   constructor() {
     this.routeSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
@@ -52,11 +61,11 @@ export class ProductsListComponent implements OnDestroy {
 
       const search = this.search();
 
-      const request$ = search
+      const productsRequest$ = search
       ? this.productsSevice.searchProducts(search, limit, skip)
       : this.productsSevice.getProducts(category, limit, skip);
 
-      request$.subscribe({
+      productsRequest$.subscribe({
         next: (res) => {
           this.products.set(res.products);
           this.total.set(res.total)
@@ -64,25 +73,25 @@ export class ProductsListComponent implements OnDestroy {
         },
         error: (error) => {
           console.error('ERROR: ', error);
-          this.error.set('Hubo un problema al cargar los datos');
+          this.error.set(ERROR_PRODUCTS_LIST);
           this.isLoading.set(false);
         }
       });
     });
   }
 
-  onPageChange(event: PageEvent) {
-    this.pageIndex.set(event.pageIndex);
-    this.pageSize.set(event.pageSize);
+  onSearchChange(query: string): void {
+    this.pageIndex.set(0);
+    this.search.set(query);
   }
-
-  onCurrencyToggle() {
+  
+  onCurrencyToggle(): void {
     this.currencyService.toggleCurrency();
   }
 
-  onSearchChange(event: any) {
-    this.pageIndex.set(0);
-    this.search.set(event.target.value);
+  onPageChange(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   onGoToDetails(productId: number): void {
