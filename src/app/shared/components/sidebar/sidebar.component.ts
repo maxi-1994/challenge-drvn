@@ -1,4 +1,5 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDrawerContainer, MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -14,15 +15,18 @@ import { ProductsService } from '../../../modules/products/services/products.ser
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   private productsService = inject(ProductsService);
   public categories = signal<string[]>([]);
 
-  constructor() {
-    effect(() => {
-      this.productsService.getCategoryList().subscribe((categoryList) => {
-        this.categories.set(categoryList);
-      });
+  ngOnInit(): void {
+    this.setCategories();
+  }
+
+  setCategories(): void {
+    this.productsService.getCategoryList()
+    .subscribe((categoryList) => {
+      this.categories.set(categoryList);
     });
   }
 }

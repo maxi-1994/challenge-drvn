@@ -5,7 +5,7 @@
   <app-message [type]="'error'" [message]="error() || ''"></app-message>
 </div>
 <ng-container *ngIf="product() as productData">
-    <form *ngIf="!isLoading()" [formGroup]="form" class="fadeIn-animation product-details-content container">
+    <form *ngIf="!isLoading()" [formGroup]="productDetailsForm" class="fadeIn-animation product-details-content container">
       <div class="product-grid">
         <div class="product-image">
           <img
@@ -26,7 +26,7 @@
               <mat-form-field appearance="fill">
                 <mat-label>Title</mat-label>
                 <input matInput formControlName="title" />
-                <mat-error *ngIf="form.controls.title.invalid">Title is required</mat-error>
+                <mat-error *ngIf="productDetailsForm.controls.title.invalid">Title is required</mat-error>
               </mat-form-field>
             </ng-template>
   
@@ -36,7 +36,7 @@
                 <mat-form-field appearance="fill" *ngIf="isEditing()">
                   <mat-label>Price</mat-label>
                   <input type="number" matInput formControlName="price" />
-                  <mat-error *ngIf="form.controls.price.invalid">Price is required</mat-error>
+                  <mat-error *ngIf="productDetailsForm.controls.price.invalid">Price is required</mat-error>
                 </mat-form-field>
                 <span class="discounted-price">
                   {{ productData.price | priceWithDiscount: productData.discountPercentage | currencyFormat }}
@@ -62,7 +62,7 @@
             <mat-form-field appearance="fill" *ngIf="isEditing()">
               <mat-label>Description</mat-label>
               <textarea matInput formControlName="description" rows="3"></textarea>
-              <mat-error *ngIf="form.controls.description.invalid">Description is required</mat-error>
+              <mat-error *ngIf="productDetailsForm.controls.description.invalid">Description is required</mat-error>
             </mat-form-field>
   
             <p *ngIf="!isEditing()">
@@ -74,13 +74,13 @@
             <mat-form-field appearance="fill" *ngIf="isEditing()">
               <mat-label>Stock</mat-label>
               <input type="number" matInput formControlName="stock" />
-              <mat-error *ngIf="form.controls.stock.invalid">Stock is required</mat-error>
+              <mat-error *ngIf="productDetailsForm.controls.stock.invalid">Stock is required</mat-error>
             </mat-form-field>
           </div>
   
           <div class="buttons-wrapper">
             <button mat-stroked-button type="button" (click)="onCancelEdit()" *ngIf="isEditing()">Cancelar</button>
-            <button mat-flat-button type="submit" color="primary" (click)="onSave()" *ngIf="isEditing()" [disabled]="form.invalid">Guardar</button>
+            <button mat-flat-button type="submit" color="primary" (click)="onSave()" *ngIf="isEditing()" [disabled]="productDetailsForm.invalid">Guardar</button>
             <button mat-stroked-button type="button" (click)="onBack()" *ngIf="!isEditing()">Back</button>
             <button mat-flat-button type="button" color="accent" (click)="onEnableEdit()" *ngIf="!isEditing()">Editar</button>
           </div>
