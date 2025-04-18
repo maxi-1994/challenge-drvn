@@ -32,7 +32,7 @@ import { ERROR_PRODUCTS_LIST, NO_PRODUCT_FOUND } from './utils/messages.constant
 export class ProductsListComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private productsSevice = inject(ProductsService);
+  private productsService = inject(ProductsService);
   public currencyService = inject(CurrencyService);
   private routeSubscription: Subscription;
 
@@ -62,21 +62,26 @@ export class ProductsListComponent implements OnDestroy {
       const search = this.search();
 
       const productsRequest$ = search
-      ? this.productsSevice.searchProducts(search, limit, skip)
-      : this.productsSevice.getProducts(category, limit, skip);
+      ? this.productsService.searchProducts(search, limit, skip)
+      : this.productsService.getProducts(category, limit, skip);
 
-      productsRequest$.subscribe({
-        next: (res) => {
-          this.products.set(res.products);
-          this.total.set(res.total)
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('ERROR: ', error);
-          this.error.set(ERROR_PRODUCTS_LIST);
-          this.isLoading.set(false);
-        }
-      });
+      const productSub = productsRequest$
+        .subscribe({
+          next: (res) => {
+            this.products.set(res.products);
+            this.total.set(res.total)
+            this.isLoading.set(false);
+          },
+          error: (error) => {
+            console.error('ERROR: ', error);
+            this.error.set(ERROR_PRODUCTS_LIST);
+            this.isLoading.set(false);
+          }
+        });
+
+      return () => {
+        productSub.unsubscribe();
+      }
     });
   }
 
