@@ -55,34 +55,39 @@ export class ProductsListComponent implements OnDestroy {
     });
   
     effect(() => {
-      const category = this.category();
-      const skip = this.pageIndex() * this.pageSize();
-      const limit = this.pageSize();
-
-      const search = this.search();
-
-      const productsRequest$ = search
-      ? this.productsService.searchProducts(search, limit, skip)
-      : this.productsService.getProducts(category, limit, skip);
-
-      const productSub = productsRequest$
-        .subscribe({
-          next: (res) => {
-            this.products.set(res.products);
-            this.total.set(res.total)
-            this.isLoading.set(false);
-          },
-          error: (error) => {
-            console.error('ERROR: ', error);
-            this.error.set(ERROR_PRODUCTS_LIST);
-            this.isLoading.set(false);
-          }
-        });
+      const productSub = this.setProductsList();
 
       return () => {
         productSub.unsubscribe();
       }
     });
+  }
+
+  setProductsList(): Subscription {
+    const search = this.search();
+
+    const category = this.category();
+    const skip = this.pageIndex() * this.pageSize();
+    const limit = this.pageSize();
+  
+    const productsRequest$ = search
+      ? this.productsService.searchProducts(search, limit, skip)
+      : this.productsService.getProducts(category, limit, skip);
+  
+    const productListSubcription = productsRequest$.subscribe({
+      next: (res) => {
+        this.products.set(res.products);
+        this.total.set(res.total);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('ERROR: ', error);
+        this.error.set(ERROR_PRODUCTS_LIST);
+        this.isLoading.set(false);
+      }
+    });
+  
+    return productListSubcription;
   }
 
   onSearchChange(query: string): void {

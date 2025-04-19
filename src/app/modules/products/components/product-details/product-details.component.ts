@@ -66,30 +66,33 @@ export class ProductDetailsComponent implements OnDestroy {
 
     effect(() => {
       const productId = this.productId();
+      const productSub = this.setProductDetails(productId);
 
-      const productSub = this.productsService.getProductById(productId)
-        .subscribe({
-          next: (productResp: ProductDetails) => {
-            this.product.set(productResp);
-            this.productDetailsForm.patchValue({
-              title: productResp.title,
-              price: productResp.price,
-              stock: productResp.stock,
-              description: productResp.description
-            });
-            this.isLoading.set(false);
-          },
-          error: (error) => {
-            console.error('ERROR: ', error);
-            this.error.set(ERROR_PRODUCT_DETAILS);
-            this.isLoading.set(false);
-          }
-        })
-
-        return () => {
-          productSub.unsubscribe();
-        }
+      return () => {
+        productSub.unsubscribe();
+      }
     });
+  }
+
+  setProductDetails(productId: string): Subscription {
+    return this.productsService.getProductById(productId)
+      .subscribe({
+        next: (productResp: ProductDetails) => {
+          this.product.set(productResp);
+          this.productDetailsForm.patchValue({
+            title: productResp.title,
+            price: productResp.price,
+            stock: productResp.stock,
+            description: productResp.description
+          });
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('ERROR: ', error);
+          this.error.set(ERROR_PRODUCT_DETAILS);
+          this.isLoading.set(false);
+        }
+      });
   }
 
   onEnableEdit(): void {
